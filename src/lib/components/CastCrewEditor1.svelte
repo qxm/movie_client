@@ -1,0 +1,442 @@
+
+<script lang="ts">
+  import AddPersonModal from '#lib/components/AddPersonModal.svelte';
+
+  export type Role =
+    | 'ACTOR'
+    | 'DIRECTOR'
+    | 'WRITER'
+    | 'PRODUCER';
+
+  export interface Credit {
+    personId: string;
+    name: string;
+    role: Role;
+    characterName?: string | null;
+  }
+
+  interface PersonOption {
+    id: string;
+    name: string;
+  }
+
+  let {
+    credits = $bindable(),
+    people = [],
+    mockMode = false
+  }: {
+    credits: Credit[];
+    people?: PersonOption[];
+    mockMode?: boolean;
+  } = $props();
+
+  let keyword = $state('');
+  let selectedPersonId = $state('');
+  let selectedRole = $state<Role>('ACTOR');
+  let characterName = $state('');
+  let showAddPerson = $state(false);
+  let error = $state('');
+
+  let filteredPeople = $derived(
+    keyword.trim()
+      ? people.filter((person) =>
+          person.name.toLowerCase().includes(
+            keyword.trim().toLowerCase()
+          )
+        )
+      : []
+  );
+
+  let selectedPerson = $derived(
+    people.find((person) => person.id === selectedPersonId)
+  );
+
+  function creditExists(credit: Credit): boolean {
+    return credits.some(
+      (existing) =>
+        existing.personId === credit.personId &&
+        existing.role === credit.role &&
+        (existing.characterName ?? '') ===
+          (credit.characterName ?? '')
+    );
+  }
+
+  function addCredit(credit: Credit) {
+    if (creditExists(credit)) {
+      error = 'This credit has already been added.';
+      return false;
+    }
+
+    credits = [...credits, credit];
+    error = '';
+    return true;
+  }
+
+  function addExistingPerson() {
+    if (!selectedPerson) {
+      error = 'Please select a person.';
+      return;
+    }
+
+    const added = addCredit({
+      personId: selectedPerson.id,
+      name: selectedPerson.name,
+      role: selectedRole,
+      characterName:
+        selectedRole === 'ACTOR'
+          ? characterName.trim() || null
+          : null
+    });
+
+    if (added) {
+      keyword = '';
+      selectedPersonId = '';
+      selectedRole = 'ACTOR';
+      characterName = '';
+    }
+  }
+
+  function handlePersonAdded(person: {
+    id: string;
+    name: string;
+    role: Role;
+    characterName?: string;
+  }) {
+    addCredit({
+      personId: person.id,
+      name: person.name,
+      role: person.role,
+      characterName: person.characterName ?? null
+    });
+
+    showAddPerson = false;
+  }
+
+  function removeCredit(index: number) {
+    credits = credits.filter((_, i) => i !== index);
+    error = '';
+  }
+</script>
+
+<section class="cast-crew-editor">
+  <div class="section-header">
+    <div>
+      <h2>Cast & Crew</h2>
+      <p>Add or remove cast and crew members.</p>
+    </div>
+
+    <button
+      type="button"
+      class="primary-btn"
+      onclick={() => showAddPerson = true}
+    >
+      + Add New Person
+    </button>
+  </div>
+
+  {#if error}
+    <div class="error" role="alert">{error}</div>
+  {/if}
+
+  <!-- Existing Credits -->
+  <div class="selected-credits">
+    <h3>Selected People ({credits.length})</h3>
+
+    {#if credits.length === 0}
+      <p class="empty">No cast or crew added yet.</p>
+    {:else}
+      <div class="credits-list">
+        {#each credits as credit, index (index)}
+          <div class="credit-item">
+            <div class="credit-info">
+              <strong>{credit.name}</strong>
+
+              <span>
+                {credit.role}
+                {#if credit.characterName}
+                  · {credit.characterName}
+                {/if}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              class="remove-btn"
+              onclick={() => removeCredit(index)}
+            >
+              Remove
+            </button>
+          </div>
+        {/each}
+      </div>
+    {/if}
+  </div>
+
+  <!-- Search Existing People -->
+  <div class="person-search">
+    <h3>Add Existing Person</h3>
+
+    <div class="field">
+      <label for="credit-person-search">Search Person</label>
+
+      <input
+        id="credit-person-search"
+        type="search"
+        bind:value={keyword}
+        placeholder="Search actors, directors..."
+        oninput={() => selectedPersonId = ''}
+      />
+    </div>
+
+    {#if keyword.trim() && !selectedPersonId}
+      <div class="search-results">
+        {#each filteredPeople as person (person.id)}
+          <button
+            type="button"
+            onclick={() => {
+              selectedPersonId = person.id;
+              keyword = person.name;
+            }}
+          >
+            {person.name}
+          </button>
+        {:else}
+          <p>No matching people found.</p>
+        {/each}
+      </div>
+    {/if}
+
+    {#if selectedPerson}
+      <p class="selected-person">
+        Selected: <strong>{selectedPerson.name}</strong>
+      </p>
+
+      <div class="role-fields">
+        <div class="field">
+          <label for="credit-role">Role</label>
+
+          <select id="credit-role" bind:value={selectedRole}>
+            <option value="ACTOR">Actor</option>
+            <option value="DIRECTOR">Director</option>
+            <option value="WRITER">Writer</option>
+            <option value="PRODUCER">Producer</option>
+          </select>
+        </div>
+
+        {#if selectedRole === 'ACTOR'}
+          <div class="field">
+            <label for="credit-character">Character Name</label>
+
+            <input
+              id="credit-character"
+              bind:value={characterName}
+              placeholder="Character name"
+            />
+          </div>
+        {/if}
+      </div>
+
+      <button
+        type="button"
+        class="outline-btn"
+        onclick={addExistingPerson}
+      >
+        + Add to Movie
+      </button>
+    {/if}
+  </div>
+</section>
+
+{#if showAddPerson}
+  <AddPersonModal
+    mode={mockMode ? 'mock' : 'graphql'}
+    onCancel={() => showAddPerson = false}
+    onAdded={handlePersonAdded}
+  />
+{/if}
+
+<style>
+  .cast-crew-editor {
+    margin-top: 24px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  h2 {
+    margin: 0 0 6px;
+    font-size: 1.3rem;
+  }
+
+  h3 {
+    margin: 0 0 16px;
+    font-size: 1.05rem;
+  }
+
+  .section-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+
+  .primary-btn,
+  .outline-btn {
+    padding: 10px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .primary-btn {
+    background: #2563eb;
+    color: white;
+    border: none;
+    white-space: nowrap;
+  }
+
+  .outline-btn {
+    background: white;
+    color: #2563eb;
+    border: 1px solid #2563eb;
+  }
+
+  .selected-credits {
+    margin-bottom: 28px;
+  }
+
+  .credits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .credit-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: white;
+  }
+
+  .credit-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .credit-info span {
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+
+  .remove-btn {
+    background: white;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+
+  .person-search {
+    background: #f9fafb;
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  label {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  input,
+  select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background: white;
+    font: inherit;
+  }
+
+  .search-results {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 7px;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+  }
+
+  .search-results button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: white;
+    border: none;
+    border-bottom: 1px solid #f3f4f6;
+    padding: 12px;
+    cursor: pointer;
+  }
+
+  .search-results button:hover {
+    background: #eff6ff;
+  }
+
+  .search-results p {
+    padding: 12px;
+    color: #6b7280;
+  }
+
+  .selected-person {
+    color: #374151;
+  }
+
+  .role-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .empty {
+    padding: 18px;
+    background: #f9fafb;
+    border-radius: 8px;
+    color: #6b7280;
+  }
+
+  .error {
+    padding: 12px;
+    margin-bottom: 16px;
+    border-radius: 7px;
+    background: #fef2f2;
+    color: #b91c1c;
+  }
+
+  @media (max-width: 600px) {
+    .section-header {
+      flex-direction: column;
+    }
+
+    .role-fields {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
