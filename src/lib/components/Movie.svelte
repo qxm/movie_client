@@ -189,15 +189,15 @@
 	}
 	.credits {
 		display: flex;
-		column-gap: 22px;
-		row-gap: 5px;
-		flex-wrap: wrap;
+		flex-direction: column;
+		gap: 5px;
 		margin: 0 0 12px;
 		font-size: 11px;
 		line-height: 1.7;
 	}
 	.credits > div {
-		display: flex;
+		display: grid;
+		grid-template-columns: 8ch minmax(0, 1fr);
 		align-items: baseline;
 		gap: 7px;
 		min-width: 0;

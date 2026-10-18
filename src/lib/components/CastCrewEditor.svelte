@@ -132,14 +132,13 @@
 	}
 
 	function handlePersonCreated(person: { id: string; name: string }) {
-		// Creating a Person does not automatically create a Movie Credit.
-		// Show the new Person in Search Person so the user can choose a role.
+		// Select the created person so the user can immediately choose their movie role.
 		newlyCreatedPeople = [
 			person,
 			...newlyCreatedPeople.filter((existing) => existing.id !== person.id)
 		];
-		selectedPerson = null;
-		selectedPersonId = '';
+		selectedPerson = person;
+		selectedPersonId = person.id;
 		selectedRole = 'ACTOR';
 		characterName = '';
 		keyword = person.name;
