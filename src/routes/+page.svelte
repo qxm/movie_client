@@ -65,7 +65,6 @@
 			<h1>Good stories live here<span>.</span></h1>
 			<p class="intro">A place for every film, and the people who bring it to life.</p>
 		</div>
-		<a class="add-button" href="/add"><span aria-hidden="true">＋</span> Add movie</a>
 	</header>
 
 	<section class="collection" aria-labelledby="collection-title" aria-busy={loading}>
@@ -284,28 +283,6 @@
 	button,
 	select {
 		cursor: pointer;
-	}
-	.add-button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 12px;
-		padding: 12px 19px;
-		border-radius: 8px;
-		color: white;
-		background: var(--blue);
-		font-size: 13px;
-		font-weight: 650;
-		white-space: nowrap;
-		box-shadow: 0 3px 8px #2563eb15;
-	}
-	.add-button:hover {
-		background: #1d4ed8;
-	}
-	.add-button > span {
-		font-size: 19px;
-		line-height: 1;
-		font-weight: 400;
 	}
 	.collection-heading {
 		display: flex;
