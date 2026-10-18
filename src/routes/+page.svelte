@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import MovieList from '#lib/components/MovieList.svelte';
-	import { getMovies, type Movie } from '#lib/api/movies';
+	import { getMovies } from '#lib/api/movies';
+	import type { Movie } from '#lib/types';
 
 	let movies = $state<Movie[]>([]);
 	let loading = $state(true);
@@ -15,7 +16,7 @@
 			(movie) =>
 				!query ||
 				movie.title.toLocaleLowerCase().includes(query) ||
-				(movie.releaseYear > 0 && String(movie.releaseYear).includes(query)) ||
+				((movie.releaseYear ?? 0) > 0 && String(movie.releaseYear).includes(query)) ||
 				movie.credits?.some((credit) => credit.person?.name.toLocaleLowerCase().includes(query))
 		);
 		return [...filtered].sort((a, b) => {
@@ -25,8 +26,9 @@
 				if (!a.releaseYear && b.releaseYear) return 1;
 				if (a.releaseYear && !b.releaseYear) return -1;
 				return (
-					(sort === 'year-desc' ? b.releaseYear - a.releaseYear : a.releaseYear - b.releaseYear) ||
-					titles
+					(sort === 'year-desc'
+						? (b.releaseYear ?? 0) - (a.releaseYear ?? 0)
+						: (a.releaseYear ?? 0) - (b.releaseYear ?? 0)) || titles
 				);
 			}
 			return titles;

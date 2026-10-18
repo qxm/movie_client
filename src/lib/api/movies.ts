@@ -1,41 +1,11 @@
 import { graphql } from './graphql';
+import type { Movie, CreateMovieInput } from '#lib/types';
 
-export interface MovieCredit {
-    personId: string;
-     person: {
-        id: string;
-        name: string;
-        biography: string;
-    } | null;
-    role: 'ACTOR' | 'DIRECTOR' | 'WRITER' | 'PRODUCER';
-    characterName: string;
-}
-
-export interface Movie {
-    id: string;
-    title: string;
-    releaseYear: number;
-    synopsis: string;
-    artworkUrl: string;
-    credits: MovieCredit[];
-}
-
-export interface MovieCreditInput {
-    personId: string;
-    role: MovieCredit['role'];
-    characterName: string;
-}
-
-export interface CreateMovieInput {
-    title: string;
-    releaseYear: number;
-    synopsis: string;
-    artworkUrl: string;
-    credits: MovieCreditInput[];
-}
+// Preserve existing API-module type imports for callers.
+export type { Movie, MovieCredit, MovieCreditInput, CreateMovieInput } from '#lib/types';
 
 export async function getMovies(): Promise<Movie[]> {
-    const query = `
+	const query = `
         query {
             movies {
                 id
@@ -57,15 +27,13 @@ export async function getMovies(): Promise<Movie[]> {
         }
     `;
 
-    const data = await graphql<{ movies: Movie[] }>(query);
+	const data = await graphql<{ movies: Movie[] }>(query);
 
-    return data.movies;
+	return data.movies;
 }
 
-export async function createMovie(
-    input: CreateMovieInput
-): Promise<Movie> {
-    const mutation = `
+export async function createMovie(input: CreateMovieInput): Promise<Movie> {
+	const mutation = `
         mutation CreateMovie($input: CreateMovieInput!) {
             createMovie(input: $input) {
                 id
@@ -83,16 +51,13 @@ export async function createMovie(
         }
     `;
 
-    const data = await graphql<{ createMovie: Movie }>(
-        mutation,
-        { input }
-    );
+	const data = await graphql<{ createMovie: Movie }>(mutation, { input });
 
-    return data.createMovie;
+	return data.createMovie;
 }
 
 export async function getMovie(id: string): Promise<Movie | null> {
-    const query = `
+	const query = `
         query GetMovie($id: ID!) {
             movie(id: $id) {
                 id
@@ -114,25 +79,19 @@ export async function getMovie(id: string): Promise<Movie | null> {
         }
     `;
 
-    const data = await graphql<{ movie: Movie | null }>(
-        query,
-        { id }
-    );
+	const data = await graphql<{ movie: Movie | null }>(query, { id });
 
-    return data.movie;
+	return data.movie;
 }
 
 export async function deleteMovie(id: string): Promise<boolean> {
-    const mutation = `
+	const mutation = `
         mutation DeleteMovie($id: ID!) {
             deleteMovie(id: $id)
         }
     `;
 
-    const data = await graphql<{ deleteMovie: boolean }>(
-        mutation,
-        { id }
-    );
+	const data = await graphql<{ deleteMovie: boolean }>(mutation, { id });
 
-    return data.deleteMovie;
+	return data.deleteMovie;
 }

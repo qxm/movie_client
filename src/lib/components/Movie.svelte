@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { personHref } from '#lib/navigation/person';
-	import type { Movie as MovieType } from '#lib/api/movies';
+	import type { Movie as MovieType } from '#lib/types';
 	let { movie, view = 'list' }: { movie: MovieType; view?: 'list' | 'grid' } = $props();
 	let imageFailed = $state(false);
 	$effect(() => {

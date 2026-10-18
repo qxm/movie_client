@@ -1,20 +1,13 @@
+import type { Movie } from './movie';
+import type { Person } from './person';
 
-export interface MovieSearchResult {
-  id: string;
-  title: string;
-  releaseYear?: number | null;
-  artworkUrl?: string | null;
-}
-
-export interface PersonSearchResult {
-  id: string;
-  name: string;
-  knownAs?: string | null;
-  photoUrl?: string | null;
-}
+export type MovieSearchResult = Pick<
+	Movie,
+	'id' | 'title' | 'releaseYear' | 'synopsis' | 'artworkUrl'
+>;
+export type PersonSearchResult = Person;
 
 export interface SearchResult {
-  movies: MovieSearchResult[];
-  people: PersonSearchResult[];
+	movies: MovieSearchResult[];
+	people: PersonSearchResult[];
 }
-

@@ -5,18 +5,8 @@
 	import { personHref } from '#lib/navigation/person';
 	import { graphql } from '#lib/api/graphql';
 
-	interface MovieSearchResult {
-		id: string;
-		title: string;
-		releaseYear?: number | null;
-		artworkUrl?: string | null;
-		synopsis?: string | null;
-	}
-	interface PersonSearchResult {
-		id: string;
-		name: string;
-		biography?: string | null;
-	}
+	import type { MovieSearchResult, PersonSearchResult } from '#lib/types';
+
 	type Filter = 'all' | 'movies' | 'people';
 	const GET_MOVIES = `query GetMoviesForSearch { movies { id title releaseYear artworkUrl synopsis } }`;
 	const SEARCH_PEOPLE = `query SearchPeople($keyword: String!) { searchPeople(keyword: $keyword) { id name biography } }`;

@@ -5,14 +5,7 @@
 	import { createMovie } from '#lib/api/movies';
 	import CastCrewEditor from '#lib/components/CastCrewEditor.svelte';
 
-	type CreditRole = 'ACTOR' | 'DIRECTOR' | 'WRITER' | 'PRODUCER';
-
-	interface EditableCredit {
-		personId: string;
-		name: string;
-		role: CreditRole;
-		characterName?: string | null;
-	}
+	import type { EditableCredit } from '#lib/types';
 
 	let title = $state('');
 	let releaseYear = $state<number | undefined>(undefined);

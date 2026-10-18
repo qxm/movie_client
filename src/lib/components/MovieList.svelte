@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Movie from './Movie.svelte';
-	import type { Movie as MovieType } from '#lib/api/movies';
+	import type { Movie as MovieType } from '#lib/types';
 	let { movies, view = 'list' }: { movies: MovieType[]; view?: 'list' | 'grid' } = $props();
 </script>
 

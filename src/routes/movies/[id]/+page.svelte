@@ -7,27 +7,7 @@
 	import { uploadArtwork, validateArtwork } from '#lib/api/artworks';
 	import CastCrewEditor from '#lib/components/CastCrewEditor.svelte';
 
-	type Role = 'ACTOR' | 'DIRECTOR' | 'WRITER' | 'PRODUCER';
-	interface PersonCredit {
-		personId: string;
-		person: { id: string; name: string } | null;
-		role: string;
-		characterName?: string | null;
-	}
-	interface Movie {
-		id: string;
-		title: string;
-		releaseYear: number | null;
-		synopsis: string | null;
-		artworkUrl: string | null;
-		credits: PersonCredit[];
-	}
-	interface EditableCredit {
-		personId: string;
-		name: string;
-		role: Role;
-		characterName?: string | null;
-	}
+	import type { Movie, EditableCredit, UpdateMovieInput } from '#lib/types';
 
 	const id = $derived(page.params.id);
 	let movie = $state<Movie | null>(null);
@@ -118,7 +98,7 @@
 		editingCredits = (movie.credits ?? []).map((credit) => ({
 			personId: credit.personId,
 			name: credit.person?.name ?? 'Unknown person',
-			role: credit.role as Role,
+			role: credit.role,
 			characterName: credit.characterName ?? ''
 		}));
 	}
@@ -187,7 +167,7 @@
 				artworkUrl = uploadedPoster.url;
 			}
 			uploading = false;
-			const input = {
+			const input: UpdateMovieInput = {
 				title: form.title.trim(),
 				releaseYear: year,
 				synopsis: form.synopsis.trim(),

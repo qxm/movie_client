@@ -5,11 +5,8 @@
 	import { graphql } from '#lib/api/graphql';
 	import { personReturnTarget } from '#lib/navigation/person';
 
-	interface Person {
-		id: string;
-		name: string;
-		biography: string | null;
-	}
+	import type { Person, UpdatePersonInput } from '#lib/types';
+
 	const id = $derived(page.params.id);
 	const returnTarget = $derived(personReturnTarget(page.url.searchParams.get('returnTo')));
 	let person = $state<Person | null>(null);
@@ -89,7 +86,10 @@
 		try {
 			const data = await graphql<{ updatePerson: Person }>(UPDATE_PERSON, {
 				id: person.id,
-				input: { name: form.name.trim(), biography: form.biography.trim() }
+				input: {
+					name: form.name.trim(),
+					biography: form.biography.trim()
+				} satisfies UpdatePersonInput
 			});
 			person = data.updatePerson;
 			resetForm();
