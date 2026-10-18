@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { personHref } from '#lib/navigation/person';
 	import { page } from '$app/state';
 	import { onDestroy, untrack } from 'svelte';
 	import { goto } from '$app/navigation';
@@ -454,7 +455,7 @@
 										<div class="people-list">
 											{#each group.members as credit, index (credit.personId + '-' + index)}<a
 													class="person-card"
-													href={`/people/${credit.personId}`}
+													href={personHref(credit.personId, `/movies/${movie.id}`)}
 													><span class="avatar" aria-hidden="true"
 														>{(credit.person?.name ?? '?')
 															.split(/\s+/)

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { personHref } from '#lib/navigation/person';
 	import type { Movie as MovieType } from '#lib/api/movies';
 	let { movie, view = 'list' }: { movie: MovieType; view?: 'list' | 'grid' } = $props();
 	let imageFailed = $state(false);
@@ -70,7 +71,7 @@
 						<dd>
 							{#each group.members as credit, index (index)}{#if index > 0}<span class="separator"
 										>,
-									</span>{/if}<a href={`/people/${credit.personId}`}>{credit.person?.name}</a
+									</span>{/if}<a href={personHref(credit.personId, '/')}>{credit.person?.name}</a
 								>{/each}
 						</dd>
 					</div>{/each}
