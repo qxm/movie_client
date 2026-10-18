@@ -283,7 +283,7 @@
 							bind:this={fileInput}
 							id="artwork-file"
 							type="file"
-							accept="image/jpeg,image/png"
+							accept="image/jpeg,image/png,image/webp"
 							onchange={onArtworkSelected}
 							aria-describedby="upload-hint"
 						/>
@@ -291,7 +291,7 @@
 							><span aria-hidden="true">↑</span>
 							{artworkFile ? 'Replace image' : 'Choose an image'}</label
 						>
-						<p id="upload-hint" class="hint">JPEG or PNG · Up to 5 MB</p>
+						<p id="upload-hint" class="hint">JPEG, PNG or WebP · Up to 5 MB</p>
 					</div>
 					{#if artworkFile}
 						<div class="file-details">

@@ -4,14 +4,14 @@ import { validateArtwork, uploadArtwork } from './artworks';
 afterEach(() => vi.unstubAllGlobals());
 
 describe('poster validation', () => {
-	it.each(['image/png', 'image/jpeg'])('accepts %s at the size limit', (type) => {
+	it.each(['image/png', 'image/jpeg', 'image/webp'])('accepts %s at the size limit', (type) => {
 		expect(validateArtwork({ type, size: 5 * 1024 * 1024 })).toBeNull();
 	});
 	it.each([0, 5 * 1024 * 1024 + 1])('rejects invalid size %s', (size) => {
 		expect(validateArtwork({ type: 'image/png', size })).toMatch(/non-empty/);
 	});
 	it('rejects unsupported formats', () => {
-		expect(validateArtwork({ type: 'image/gif', size: 100 })).toMatch(/JPEG or PNG/);
+		expect(validateArtwork({ type: 'image/gif', size: 100 })).toMatch(/JPEG, PNG or WebP/);
 	});
 });
 

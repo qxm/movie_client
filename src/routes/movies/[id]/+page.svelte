@@ -261,14 +261,14 @@
 								class="sr-only file-input"
 								id="poster-upload"
 								type="file"
-								accept="image/jpeg,image/png"
+								accept="image/jpeg,image/png,image/webp"
 								onchange={selectPoster}
 								aria-describedby="poster-hint"
 							/>{/key}
 						<label class="upload-button" for="poster-upload"
 							>↑ {posterFile ? 'Replace selection' : 'Change poster'}</label
 						>
-						<p class="hint" id="poster-hint">JPEG or PNG · Up to 5 MB</p>
+						<p class="hint" id="poster-hint">JPEG, PNG or WebP · Up to 5 MB</p>
 						{#if posterFile}<p class="file-name">{posterFile.name}</p>
 							<button class="text-button" type="button" onclick={clearPosterSelection}
 								>Keep current poster</button

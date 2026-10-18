@@ -1,5 +1,5 @@
 export function validateArtwork(file: Pick<File, 'type' | 'size'>): string | null {
-    if (!['image/jpeg', 'image/png'].includes(file.type)) return 'Please select a JPEG or PNG image.';
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) return 'Please select a JPEG, PNG or WebP image.';
     if (file.size === 0 || file.size > 5 * 1024 * 1024) return 'Poster must be non-empty and 5 MB or smaller.';
     return null;
 }
