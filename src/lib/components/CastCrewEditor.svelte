@@ -1,12 +1,9 @@
 <script lang="ts">
+	import { CreditRole, CREDIT_ROLE_OPTIONS } from '#lib/types';
 	import AddPersonModal from '#lib/components/AddPersonModal.svelte';
 	import { graphql } from '#lib/api/graphql';
 
-	import type {
-		CreditRole as Role,
-		EditableCredit as Credit,
-		PersonSummary as PersonOption
-	} from '#lib/types';
+	import type { EditableCredit as Credit, PersonSummary as PersonOption } from '#lib/types';
 
 	let {
 		credits = $bindable(),
@@ -18,7 +15,7 @@
 
 	let keyword = $state('');
 	let selectedPersonId = $state('');
-	let selectedRole = $state<Role>('ACTOR');
+	let selectedRole = $state<CreditRole>(CreditRole.ACTOR);
 	let characterName = $state('');
 	let showAddPerson = $state(false);
 	let error = $state('');
@@ -119,14 +116,14 @@
 			personId: selectedPerson.id,
 			name: selectedPerson.name,
 			role: selectedRole,
-			characterName: selectedRole === 'ACTOR' ? characterName.trim() || null : null
+			characterName: selectedRole === CreditRole.ACTOR ? characterName.trim() || null : null
 		});
 
 		if (added) {
 			keyword = '';
 			selectedPerson = null;
 			selectedPersonId = '';
-			selectedRole = 'ACTOR';
+			selectedRole = CreditRole.ACTOR;
 			characterName = '';
 		}
 	}
@@ -139,7 +136,7 @@
 		];
 		selectedPerson = person;
 		selectedPersonId = person.id;
-		selectedRole = 'ACTOR';
+		selectedRole = CreditRole.ACTOR;
 		characterName = '';
 		keyword = person.name;
 		searchResults = [];
@@ -251,14 +248,13 @@
 					<label for="credit-role">Role</label>
 
 					<select id="credit-role" bind:value={selectedRole}>
-						<option value="ACTOR">Actor</option>
-						<option value="DIRECTOR">Director</option>
-						<option value="WRITER">Writer</option>
-						<option value="PRODUCER">Producer</option>
+						{#each CREDIT_ROLE_OPTIONS as option (option.value)}
+							<option value={option.value}>{option.label}</option>
+						{/each}
 					</select>
 				</div>
 
-				{#if selectedRole === 'ACTOR'}
+				{#if selectedRole === CreditRole.ACTOR}
 					<div class="field">
 						<label for="credit-character">Character Name</label>
 

@@ -1,6 +1,7 @@
 import type { PersonSummary } from './person';
 
-export type CreditRole = 'ACTOR' | 'DIRECTOR' | 'WRITER' | 'PRODUCER';
+import type { CreditRole } from './roles';
+export { CreditRole } from './roles';
 
 export interface MovieCredit {
 	personId: string;

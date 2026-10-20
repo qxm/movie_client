@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { CreditRole, CREDIT_ROLE_LABELS } from '#lib/types';
 	import { personHref } from '#lib/navigation/person';
 	import type { Movie as MovieType } from '#lib/types';
 	let { movie, view = 'list' }: { movie: MovieType; view?: 'list' | 'grid' } = $props();
@@ -10,20 +11,22 @@
 	const people = $derived(
 		[
 			{
-				label: 'Director',
-				members: movie.credits?.filter((c) => c.role === 'DIRECTOR' && c.person?.name) ?? []
+				label: CREDIT_ROLE_LABELS[CreditRole.DIRECTOR],
+				members:
+					movie.credits?.filter((c) => c.role === CreditRole.DIRECTOR && c.person?.name) ?? []
 			},
 			{
 				label: 'Cast',
-				members: movie.credits?.filter((c) => c.role === 'ACTOR' && c.person?.name) ?? []
+				members: movie.credits?.filter((c) => c.role === CreditRole.ACTOR && c.person?.name) ?? []
 			},
 			{
-				label: 'Writer',
-				members: movie.credits?.filter((c) => c.role === 'WRITER' && c.person?.name) ?? []
+				label: CREDIT_ROLE_LABELS[CreditRole.WRITER],
+				members: movie.credits?.filter((c) => c.role === CreditRole.WRITER && c.person?.name) ?? []
 			},
 			{
-				label: 'Producer',
-				members: movie.credits?.filter((c) => c.role === 'PRODUCER' && c.person?.name) ?? []
+				label: CREDIT_ROLE_LABELS[CreditRole.PRODUCER],
+				members:
+					movie.credits?.filter((c) => c.role === CreditRole.PRODUCER && c.person?.name) ?? []
 			}
 		].filter((group) => group.members.length)
 	);

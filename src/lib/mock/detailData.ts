@@ -1,9 +1,5 @@
-import type {
-	Movie as SharedMovie,
-	Person as SharedPerson,
-	PersonSummary,
-	CreditRole
-} from '#lib/types';
+import { CreditRole } from '#lib/types';
+import type { Movie as SharedMovie, Person as SharedPerson, PersonSummary } from '#lib/types';
 
 // Legacy mock credits contain a person object rather than the API's personId field.
 export interface PersonCredit {
@@ -40,17 +36,17 @@ export const mockMovies: Movie[] = [
 		credits: [
 			{
 				person: { id: '1', name: 'Morgan Freeman' },
-				role: 'ACTOR',
+				role: CreditRole.ACTOR,
 				characterName: 'Ellis Boyd Redding'
 			},
 			{
 				person: { id: '2', name: 'Tim Robbins' },
-				role: 'ACTOR',
+				role: CreditRole.ACTOR,
 				characterName: 'Andy Dufresne'
 			},
 			{
 				person: { id: '3', name: 'Frank Darabont' },
-				role: 'DIRECTOR'
+				role: CreditRole.DIRECTOR
 			}
 		]
 	},
@@ -64,12 +60,12 @@ export const mockMovies: Movie[] = [
 		credits: [
 			{
 				person: { id: '4', name: 'Christian Bale' },
-				role: 'ACTOR',
+				role: CreditRole.ACTOR,
 				characterName: 'Bruce Wayne / Batman'
 			},
 			{
 				person: { id: '5', name: 'Christopher Nolan' },
-				role: 'DIRECTOR'
+				role: CreditRole.DIRECTOR
 			}
 		]
 	}
@@ -91,7 +87,7 @@ export const mockPeople: Person[] = [
 					title: 'The Shawshank Redemption',
 					releaseYear: 1994
 				},
-				role: 'ACTOR',
+				role: CreditRole.ACTOR,
 				characterName: 'Ellis Boyd Redding'
 			}
 		]
@@ -110,7 +106,7 @@ export const mockPeople: Person[] = [
 					title: 'The Shawshank Redemption',
 					releaseYear: 1994
 				},
-				role: 'ACTOR',
+				role: CreditRole.ACTOR,
 				characterName: 'Andy Dufresne'
 			}
 		]
@@ -129,7 +125,7 @@ export const mockPeople: Person[] = [
 					title: 'The Shawshank Redemption',
 					releaseYear: 1994
 				},
-				role: 'DIRECTOR'
+				role: CreditRole.DIRECTOR
 			}
 		]
 	},
@@ -147,7 +143,7 @@ export const mockPeople: Person[] = [
 					title: 'The Dark Knight',
 					releaseYear: 2008
 				},
-				role: 'ACTOR',
+				role: CreditRole.ACTOR,
 				characterName: 'Bruce Wayne / Batman'
 			}
 		]
@@ -166,7 +162,7 @@ export const mockPeople: Person[] = [
 					title: 'The Dark Knight',
 					releaseYear: 2008
 				},
-				role: 'DIRECTOR'
+				role: CreditRole.DIRECTOR
 			}
 		]
 	}

@@ -1,3 +1,4 @@
+import { CreditRole } from '#lib/types';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMovie, deleteMovie, getMovie, getMovies } from './movies';
 import type { CreateMovieInput, Movie } from '#lib/types';
@@ -11,7 +12,7 @@ const movie: Movie = {
 	credits: [
 		{
 			personId: 'person-1',
-			role: 'ACTOR',
+			role: CreditRole.ACTOR,
 			characterName: 'Hero',
 			person: { id: 'person-1', name: 'Alice' }
 		}
@@ -62,7 +63,7 @@ describe('movie GraphQL operations', () => {
 			releaseYear: 0,
 			synopsis: '',
 			artworkUrl: '',
-			credits: [{ personId: 'person-1', role: 'ACTOR', characterName: 'Hero' }]
+			credits: [{ personId: 'person-1', role: CreditRole.ACTOR, characterName: 'Hero' }]
 		};
 		respond({ createMovie: movie });
 		await expect(createMovie(input)).resolves.toEqual(movie);
@@ -95,5 +96,22 @@ describe('movie GraphQL operations', () => {
 		await expect(
 			createMovie({ title: 'Movie', releaseYear: 0, synopsis: '', artworkUrl: '', credits: [] })
 		).rejects.toThrow('Person not found');
+	});
+});
+
+describe('credit role serialization', () => {
+	it.each(Object.values(CreditRole))('sends %s as a string to GraphQL', async (role) => {
+		respond({ createMovie: movie });
+		await createMovie({
+			title: 'Movie',
+			releaseYear: 0,
+			synopsis: '',
+			artworkUrl: '',
+			credits: [{ personId: 'person-1', role, characterName: '' }]
+		});
+		expect(request().variables.input).toMatchObject({
+			credits: [{ personId: 'person-1', role, characterName: '' }]
+		});
+		expect(typeof (request().variables.input as CreateMovieInput).credits[0].role).toBe('string');
 	});
 });

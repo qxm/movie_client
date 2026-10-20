@@ -1,8 +1,8 @@
+export { CreditRole, CREDIT_ROLE_LABELS, CREDIT_ROLE_OPTIONS } from './roles';
 export type { Person, PersonSummary, CreatePersonInput, UpdatePersonInput } from './person';
 export type {
 	Movie,
 	MovieCredit,
-	CreditRole,
 	MovieCreditInput,
 	CreateMovieInput,
 	UpdateMovieInput,

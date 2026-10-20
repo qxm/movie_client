@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { CreditRole } from '#lib/types';
 	import { goto } from '$app/navigation';
 	import { onDestroy } from 'svelte';
 	import { uploadArtwork, validateArtwork } from '#lib/api/artworks';
@@ -112,7 +113,8 @@
 				credits: credits.map((credit) => ({
 					personId: credit.personId,
 					role: credit.role,
-					characterName: credit.role === 'ACTOR' ? (credit.characterName?.trim() ?? '') : ''
+					characterName:
+						credit.role === CreditRole.ACTOR ? (credit.characterName?.trim() ?? '') : ''
 				}))
 			});
 

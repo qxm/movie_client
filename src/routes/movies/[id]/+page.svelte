@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { CreditRole, CREDIT_ROLE_LABELS } from '#lib/types';
 	import { personHref } from '#lib/navigation/person';
 	import { page } from '$app/state';
 	import { onDestroy, untrack } from 'svelte';
@@ -36,10 +37,10 @@
 		editing ? form.title.trim() || 'Untitled movie' : movie?.title || 'Movie details'
 	);
 	const roles = [
-		{ role: 'DIRECTOR', label: 'Direction' },
-		{ role: 'ACTOR', label: 'Cast' },
-		{ role: 'WRITER', label: 'Writing' },
-		{ role: 'PRODUCER', label: 'Production' }
+		{ role: CreditRole.DIRECTOR, label: 'Direction' },
+		{ role: CreditRole.ACTOR, label: 'Cast' },
+		{ role: CreditRole.WRITER, label: 'Writing' },
+		{ role: CreditRole.PRODUCER, label: 'Production' }
 	];
 	const creditGroups = $derived(
 		roles
@@ -175,7 +176,8 @@
 				credits: editingCredits.map((credit) => ({
 					personId: credit.personId,
 					role: credit.role,
-					characterName: credit.role === 'ACTOR' ? (credit.characterName?.trim() ?? '') : ''
+					characterName:
+						credit.role === CreditRole.ACTOR ? (credit.characterName?.trim() ?? '') : ''
 				}))
 			};
 			const data = await graphql<{ updateMovie: Movie }>(UPDATE_MOVIE, { id: movie.id, input });
@@ -446,15 +448,9 @@
 															.toUpperCase()}</span
 													><span class="person-info"
 														><strong>{credit.person?.name ?? 'Unknown person'}</strong><span
-															>{group.role === 'ACTOR'
-																? credit.characterName
-																	? `as ${credit.characterName}`
-																	: 'Actor'
-																: group.role === 'DIRECTOR'
-																	? 'Director'
-																	: group.role === 'WRITER'
-																		? 'Writer'
-																		: 'Producer'}</span
+															>{group.role === CreditRole.ACTOR && credit.characterName
+																? `as ${credit.characterName}`
+																: CREDIT_ROLE_LABELS[group.role]}</span
 														></span
 													><span class="person-arrow" aria-hidden="true">↗</span></a
 												>{/each}
