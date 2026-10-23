@@ -275,17 +275,6 @@
 							<button class="text-button" type="button" onclick={clearPosterSelection}
 								>Keep current poster</button
 							>{/if}
-						<div class="field">
-							<label for="artwork-url">Or image URL</label><input
-								id="artwork-url"
-								form="edit-movie"
-								type="text"
-								inputmode="url"
-								bind:value={form.artworkUrl}
-								disabled={!!posterFile}
-								placeholder="https://example.com/poster.jpg"
-							/>
-						</div>
 						{#if posterError}<p class="poster-error" role="alert">{posterError}</p>{/if}
 					</fieldset>
 				{:else}
@@ -896,9 +885,6 @@
 	.poster-controls .hint {
 		text-align: center;
 		margin: 8px 0 16px;
-	}
-	.poster-controls .field {
-		margin-top: 20px;
 	}
 	.poster-controls .text-button {
 		width: 100%;
