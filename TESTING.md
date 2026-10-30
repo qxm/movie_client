@@ -38,3 +38,9 @@ Additional checks:
 ## Media-service proxy
 
 `src/lib/server/artwork-proxy.spec.ts` covers multipart WebP forwarding, configured/default media-service addresses, legacy public image paths, content type and cache headers, validation failures, upstream errors, and unavailable-service messages. Run with `npm.cmd run test:unit -- --run --project server`. No running media-service is needed for these proxy tests.
+
+## Person photos
+
+`src/lib/api/images.spec.ts` covers shared image upload validation and photo-specific errors. `people.spec.ts` verifies photo URL mutation variables and response selections. The existing artwork suite continues to cover poster compatibility through the shared image helper.
+
+`src/lib/components/PersonPhotos.svelte.spec.ts` contains browser tests for successful photo upload, unsupported files, failed-upload preservation, removal, upload busy state, photo-aware person creation, and avatar fallbacks. Run `npx.cmd playwright install chromium` and `npm.cmd test` to include browser component tests.

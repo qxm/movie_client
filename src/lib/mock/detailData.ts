@@ -20,7 +20,6 @@ export interface FilmCredit {
 
 export interface Person extends SharedPerson {
 	knownAs: string | null;
-	photoUrl: string | null;
 	filmography: FilmCredit[];
 }
 

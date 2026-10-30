@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PhotoPicker from '#lib/components/PhotoPicker.svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { onDestroy, untrack } from 'svelte';
@@ -10,10 +11,21 @@
 	const id = $derived(page.params.id);
 	const returnTarget = $derived(personReturnTarget(page.url.searchParams.get('returnTo')));
 	let person = $state<Person | null>(null);
-	let form = $state({ name: '', biography: '' });
+	let form = $state<{ name: string; biography: string; photoUrl: string | null }>({
+		name: '',
+		biography: '',
+		photoUrl: null
+	});
+	let photoUploading = $state(false);
+	let photoFailed = $state(false);
 	let loading = $state(true);
 	let notFound = $state(false);
 	let editing = $state(false);
+	const displayPhotoUrl = $derived(editing ? form.photoUrl : person?.photoUrl);
+	$effect(() => {
+		void displayPhotoUrl;
+		photoFailed = false;
+	});
 	let saving = $state(false);
 	let deleting = $state(false);
 	let error = $state('');
@@ -33,12 +45,17 @@
 			.join('')
 			.toUpperCase()
 	);
-	const PERSON_QUERY = `query Person($id: ID!) { person(id: $id) { id name biography } }`;
-	const UPDATE_PERSON = `mutation UpdatePerson($id: ID!, $input: UpdatePersonInput!) { updatePerson(id: $id, input: $input) { id name biography } }`;
+	const PERSON_QUERY = `query Person($id: ID!) { person(id: $id) { id name biography photoUrl } }`;
+	const UPDATE_PERSON = `mutation UpdatePerson($id: ID!, $input: UpdatePersonInput!) { updatePerson(id: $id, input: $input) { id name biography photoUrl } }`;
 	const DELETE_PERSON = `mutation DeletePerson($id: ID!) { deletePerson(id: $id) }`;
 
 	function resetForm() {
-		if (person) form = { name: person.name, biography: person.biography ?? '' };
+		if (person)
+			form = {
+				name: person.name,
+				biography: person.biography ?? '',
+				photoUrl: person.photoUrl ?? null
+			};
 	}
 	function startEdit() {
 		resetForm();
@@ -75,7 +92,7 @@
 	}
 	async function savePerson(event: SubmitEvent) {
 		event.preventDefault();
-		if (!person || saving) return;
+		if (!person || saving || photoUploading) return;
 		if (!form.name.trim() || form.name.trim().length > 255) {
 			error = 'Name is required and must be 255 characters or fewer.';
 			return;
@@ -88,7 +105,8 @@
 				id: person.id,
 				input: {
 					name: form.name.trim(),
-					biography: form.biography.trim()
+					biography: form.biography.trim(),
+					photoUrl: form.photoUrl ?? ''
 				} satisfies UpdatePersonInput
 			});
 			person = data.updatePerson;
@@ -145,10 +163,19 @@
 	{:else if person}
 		<div class="profile-grid">
 			<aside class="profile-sidebar" aria-label="Profile overview">
-				<div class="profile-art" aria-hidden="true">
-					<span class="portrait-ring"></span><span class="monogram">{initials}</span><span
-						class="portrait-line"
-					></span><span class="portrait-caption">THE PEOPLE BEHIND THE STORY</span>
+				<div class="profile-art" aria-hidden={displayPhotoUrl && !photoFailed ? undefined : true}>
+					{#if displayPhotoUrl && !photoFailed}
+						<img
+							class="profile-photo"
+							src={displayPhotoUrl}
+							alt={`${displayName} photo`}
+							onerror={() => (photoFailed = true)}
+						/>
+					{:else}
+						<span class="portrait-ring"></span><span class="monogram">{initials}</span><span
+							class="portrait-line"
+						></span><span class="portrait-caption">THE PEOPLE BEHIND THE STORY</span>
+					{/if}
 				</div>
 				<div class="sidebar-caption">
 					<span>PART OF YOUR COLLECTION</span>
@@ -186,8 +213,8 @@
 						<p>{error}</p>
 					</div>{/if}
 				{#if editing}
-					<form id="edit-person" onsubmit={savePerson} aria-busy={saving}>
-						<fieldset class="panel" disabled={saving}>
+					<form id="edit-person" onsubmit={savePerson} aria-busy={saving || photoUploading}>
+						<fieldset class="panel" disabled={saving || photoUploading}>
 							<legend class="sr-only">Edit person</legend>
 							<div class="panel-heading">
 								<div>
@@ -211,6 +238,11 @@
 									>
 								</div>
 							</div>
+							<PhotoPicker
+								bind:photoUrl={form.photoUrl}
+								bind:uploading={photoUploading}
+								name={form.name}
+							/>
 							<div class="field biography-field">
 								<label for="biography">Biography <span class="optional">Optional</span></label
 								><textarea
@@ -236,8 +268,11 @@
 									class="secondary-button"
 									type="button"
 									onclick={cancelEdit}
-									disabled={saving}>Cancel</button
-								><button class="primary-button" type="submit" disabled={saving || !form.name.trim()}
+									disabled={saving || photoUploading}>Cancel</button
+								><button
+									class="primary-button"
+									type="submit"
+									disabled={saving || photoUploading || !form.name.trim()}
 									>{saving ? 'Saving…' : 'Save changes'}</button
 								>
 							</div>
@@ -359,6 +394,13 @@
 	.profile-sidebar,
 	.profile-content {
 		min-width: 0;
+	}
+	.profile-photo {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
 	}
 	.profile-art {
 		position: relative;

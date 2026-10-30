@@ -21,6 +21,7 @@ export async function getMovies(): Promise<Movie[]> {
                             id
                             name
                             biography
+                            photoUrl
                         } 
 		}
             }
@@ -45,7 +46,7 @@ export async function createMovie(input: CreateMovieInput): Promise<Movie> {
                     personId
                     role
                     characterName
-                    person { id name biography }
+                    person { id name biography photoUrl }
                 }
             }
         }
@@ -73,6 +74,7 @@ export async function getMovie(id: string): Promise<Movie | null> {
                         id
                         name
                         biography
+                        photoUrl
                     }
                 }
             }

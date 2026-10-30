@@ -11,6 +11,7 @@ export async function getPeople(): Promise<Person[]> {
 				id
 				name
 				biography
+				photoUrl
 			}
 		}
 	`);
@@ -26,6 +27,7 @@ export async function createPerson(input: CreatePersonInput): Promise<Person> {
 					id
 					name
 					biography
+					photoUrl
 				}
 			}
 		`,

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PersonAvatar from '#lib/components/PersonAvatar.svelte';
 	import { onDestroy, untrack } from 'svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
@@ -9,7 +10,7 @@
 
 	type Filter = 'all' | 'movies' | 'people';
 	const GET_MOVIES = `query GetMoviesForSearch { movies { id title releaseYear artworkUrl synopsis } }`;
-	const SEARCH_PEOPLE = `query SearchPeople($keyword: String!) { searchPeople(keyword: $keyword) { id name biography } }`;
+	const SEARCH_PEOPLE = `query SearchPeople($keyword: String!) { searchPeople(keyword: $keyword) { id name biography photoUrl } }`;
 	const routeQuery = $derived(page.url.searchParams.get('q') ?? '');
 	const filter = $derived.by((): Filter => {
 		const selected = page.url.searchParams.get('filter');
@@ -317,13 +318,7 @@
 										class="result-card person-result"
 										href={personHref(person.id, returnToSearch)}
 										><div class="avatar" aria-hidden="true">
-											{person.name
-												.split(/\s+/)
-												.filter(Boolean)
-												.slice(0, 2)
-												.map((part) => part[0])
-												.join('')
-												.toUpperCase()}
+											<PersonAvatar name={person.name} photoUrl={person.photoUrl} />
 										</div>
 										<div class="result-info">
 											<span class="result-type">PERSON</span>

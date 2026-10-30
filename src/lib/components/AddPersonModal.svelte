@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PhotoPicker from '#lib/components/PhotoPicker.svelte';
 	import { createPerson } from '#lib/api/people';
 	import type { Person } from '#lib/types';
 
@@ -11,13 +12,15 @@
 
 	let name = $state('');
 	let biography = $state('');
+	let photoUrl = $state<string | null>(null);
+	let photoUploading = $state(false);
 	let saving = $state(false);
 	let error = $state('');
 
 	async function handleSubmit(event: SubmitEvent) {
 		event.preventDefault();
 
-		if (!name.trim() || saving) return;
+		if (!name.trim() || saving || photoUploading) return;
 
 		saving = true;
 		error = '';
@@ -25,7 +28,8 @@
 		try {
 			const person = await createPerson({
 				name: name.trim(),
-				biography: biography.trim()
+				biography: biography.trim(),
+				photoUrl
 			});
 
 			onCreated(person);
@@ -43,12 +47,21 @@
 		<div class="modal-header">
 			<h2 id="modal-title">Add New Person</h2>
 
-			<button type="button" onclick={onClose} disabled={saving} aria-label="Close"> × </button>
+			<button
+				type="button"
+				onclick={onClose}
+				disabled={saving || photoUploading}
+				aria-label="Close"
+			>
+				×
+			</button>
 		</div>
 
 		<form onsubmit={handleSubmit}>
 			<label for="person-name">Name *</label>
 			<input id="person-name" bind:value={name} required maxlength="255" />
+
+			<PhotoPicker bind:photoUrl bind:uploading={photoUploading} {name} />
 
 			<label for="person-bio">Biography</label>
 			<textarea id="person-bio" bind:value={biography} rows="4"></textarea>
@@ -58,9 +71,11 @@
 			{/if}
 
 			<div class="actions">
-				<button type="button" onclick={onClose} disabled={saving}> Cancel </button>
+				<button type="button" onclick={onClose} disabled={saving || photoUploading}>
+					Cancel
+				</button>
 
-				<button type="submit" disabled={saving || !name.trim()}>
+				<button type="submit" disabled={saving || photoUploading || !name.trim()}>
 					{saving ? 'Creating...' : 'Create Person'}
 				</button>
 			</div>

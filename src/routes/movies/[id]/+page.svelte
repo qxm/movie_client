@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PersonAvatar from '#lib/components/PersonAvatar.svelte';
 	import { CreditRole, CREDIT_ROLE_LABELS } from '#lib/types';
 	import { personHref } from '#lib/navigation/person';
 	import { page } from '$app/state';
@@ -55,7 +56,7 @@
 		imageFailed = false;
 	});
 
-	const MOVIE_FIELDS = `id title releaseYear synopsis artworkUrl credits { personId role characterName person { id name } }`;
+	const MOVIE_FIELDS = `id title releaseYear synopsis artworkUrl credits { personId role characterName person { id name photoUrl } }`;
 	const MOVIE_QUERY = `query Movie($id: ID!) { movie(id: $id) { ${MOVIE_FIELDS} } }`;
 	const UPDATE_MOVIE = `mutation UpdateMovie($id: ID!, $input: UpdateMovieInput!) { updateMovie(id: $id, input: $input) { ${MOVIE_FIELDS} } }`;
 	const DELETE_MOVIE = `mutation DeleteMovie($id: ID!) { deleteMovie(id: $id) }`;
@@ -428,13 +429,10 @@
 													class="person-card"
 													href={personHref(credit.personId, `/movies/${movie.id}`)}
 													><span class="avatar" aria-hidden="true"
-														>{(credit.person?.name ?? '?')
-															.split(/\s+/)
-															.filter(Boolean)
-															.slice(0, 2)
-															.map((part) => part[0])
-															.join('')
-															.toUpperCase()}</span
+														><PersonAvatar
+															name={credit.person?.name ?? 'Unknown person'}
+															photoUrl={credit.person?.photoUrl}
+														/></span
 													><span class="person-info"
 														><strong>{credit.person?.name ?? 'Unknown person'}</strong><span
 															>{group.role === CreditRole.ACTOR && credit.characterName
