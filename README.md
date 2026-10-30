@@ -56,9 +56,9 @@ You can preview the production build with `npm run preview`.
 
 ## Add Movie
 
-Run the people service (9092), movie service (HTTP 8081 / gRPC 9091), and GraphQL gateway (8080), then run `npm install` and `npm run dev` here. Open `/add` to create a movie with optional year, synopsis, JPEG/PNG poster (up to 5 MB), and cast/crew. Search for existing people or create a person, select their role, and click Add to Movie before submitting.
+Run the people service (9092), movie service (gRPC 9091), GraphQL gateway (8080), and media-service (HTTP 8082), then run `npm install` and `npm run dev` here. Open `/add` to create a movie with optional year, synopsis, JPEG/PNG/WebP poster (up to 5 MB), and cast/crew. Search for existing people or create a person, select their role, and click Add to Movie before submitting.
 
-The frontend server forwards `/api/graphql` to the gateway and `/api/artworks` to the movie service. Optional server environment variables are listed in `.env.example`. For an adapter-node production deployment, set `BODY_SIZE_LIMIT=6M` so multipart posters fit the request limit. Uploaded poster URLs use the same frontend origin and work after refreshing the detail page. Keep the movie service upload directory persistent.
+The frontend server forwards `/api/graphql` to the gateway and `/api/artworks` to media-service. Optional server environment variables are listed in `.env.example`. For an adapter-node production deployment, set `BODY_SIZE_LIMIT=6M` so multipart posters fit the request limit. Uploaded poster URLs use the same frontend origin and work after refreshing the detail page. Set `MEDIA_SERVICE_URL` (default `http://127.0.0.1:8082`) and keep the media-service upload directory persistent. Existing `MOVIE_SERVICE_URL` values are no longer used for image requests.
 
 The submit button locks during upload/save. Upload progress is shown; after an upload succeeds, a failed movie submission reuses that upload on retry. A successful create opens the movie detail page. An uploaded poster may remain unused if creation is abandoned; automatic cleanup is not implemented.
 

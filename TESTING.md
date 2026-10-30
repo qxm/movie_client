@@ -34,3 +34,7 @@ Additional checks:
 & "C:\Program Files\nodejs\node.exe" node_modules/svelte-check/bin/svelte-check --tsconfig ./tsconfig.json
 & "C:\Program Files\nodejs\node.exe" node_modules/vite/bin/vite.js build
 ```
+
+## Media-service proxy
+
+`src/lib/server/artwork-proxy.spec.ts` covers multipart WebP forwarding, configured/default media-service addresses, legacy public image paths, content type and cache headers, validation failures, upstream errors, and unavailable-service messages. Run with `npm.cmd run test:unit -- --run --project server`. No running media-service is needed for these proxy tests.

@@ -1,13 +1,11 @@
-import { env } from '#lib/server/env';
+import { mediaServiceUrl } from '#lib/server/media';
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ params, fetch }) => {
 	if (!/^[a-f0-9-]{36}\.(jpg|png|webp)$/.test(params.filename)) error(404, 'Poster not found.');
 	try {
-		const response = await fetch(
-			`${env.MOVIE_SERVICE_URL || 'http://localhost:8081'}/api/artworks/${params.filename}`
-		);
+		const response = await fetch(mediaServiceUrl(`/api/artworks/${params.filename}`));
 		return new Response(response.body, {
 			status: response.status,
 			headers: {
@@ -16,6 +14,6 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 			}
 		});
 	} catch {
-		error(502, 'Movie service is unavailable.');
+		error(502, 'Media service is unavailable.');
 	}
 };
